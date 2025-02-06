@@ -16,6 +16,16 @@ class ApiClient {
         });
     }
 
+    async tryParseJSON(apiRequest) {
+        let apiResponse;
+        try {
+            apiResponse = await apiRequest.json();
+        } catch (error) {
+            apiResponse = await apiRequest.text();
+        }
+        return apiResponse;
+    }
+
     async post(tokenBearer, uri, payload, statusCode = 201) {
         const apiUri = uri;
         let headers = this.headers(tokenBearer);
@@ -26,10 +36,10 @@ class ApiClient {
             data: JSON.parse(payload),
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
-        console.log(`Response ${[this.basePath]}: `);
+        const apiResponse = await this.tryParseJSON(apiRequest);
+        console.log(`Response ${[apiUri]}: `);
         console.log(apiResponse);
-        console.log(`StatusCode ${this.basePath}: ` + apiRequest.status());
+        console.log(`StatusCode ${apiUri}: ` + apiRequest.status());
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse, "payloadSended": payload }
     }
@@ -44,10 +54,10 @@ class ApiClient {
             data: JSON.parse(payload),
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
-        console.log(`Response ${[this.basePath]}: `);
+        const apiResponse = await this.tryParseJSON(apiRequest);
+        console.log(`Response ${[apiUri]}: `);
         console.log(apiResponse);
-        console.log(`StatusCode ${this.basePath}: ` + apiRequest.status());
+        console.log(`StatusCode ${apiUri}: ` + apiRequest.status());
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse, "payloadSended": payload }
     }
@@ -62,15 +72,15 @@ class ApiClient {
             data: JSON.parse(payload),
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
-        console.log(`Response ${[this.basePath]}: `);
+        const apiResponse = await this.tryParseJSON(apiRequest);
+        console.log(`Response ${[apiUri]}: `);
         console.log(apiResponse);
-        console.log(`StatusCode ${this.basePath}: ` + apiRequest.status());
+        console.log(`StatusCode ${apiUri}: ` + apiRequest.status());
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse, "payloadSended": payload }
     }
 
-    async get(tokenBearer, uri, statusCode = 201) {
+    async get(tokenBearer, uri, statusCode = 200) {
         const apiUri = uri;
         let headers = this.headers(tokenBearer);
         console.log(`Starting Request GET: ${apiUri}`);
@@ -78,15 +88,15 @@ class ApiClient {
         const apiRequest = await this.request.get(apiUri, {
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
-        console.log(`Response ${[this.basePath]}: `);
+        const apiResponse = await this.tryParseJSON(apiRequest);
+        console.log(`Response ${[apiUri]}: `);
         console.log(apiResponse);
-        console.log(`StatusCode ${this.basePath}: ` + apiRequest.status());
+        console.log(`StatusCode ${apiUri}: ` + apiRequest.status());
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse };
     }
 
-    async delete(tokenBearer, uri, statusCode = 201) {
+    async delete(tokenBearer, uri, statusCode = 200) {
         const apiUri = uri;
         let headers = this.headers(tokenBearer);
         console.log(`Starting Request DELETE: ${apiUri}`);
@@ -94,28 +104,20 @@ class ApiClient {
         const apiRequest = await this.request.delete(apiUri, {
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
-        console.log(`Response ${[this.basePath]}: `);
+        const apiResponse = await this.tryParseJSON(apiRequest);
+        console.log(`Response ${[apiUri]}: `);
         console.log(apiResponse);
-        console.log(`StatusCode ${this.basePath}: ` + apiRequest.status());
+        console.log(`StatusCode ${apiUri}: ` + apiRequest.status());
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse };
     }
 }
 
-class ApiClientAuth {
-    /**
-      * @param {import('playwright').APIRequest} request
-    */
-
+class ApiClientAuth extends ApiClient {
     headers() {
         return JSON.stringify({
             "Content-Type": "application/json"
         });
-    }
-
-    constructor(request) {
-        this.request = request;
     }
 
     async post(uri, payload, statusCode = 201) {
@@ -126,7 +128,7 @@ class ApiClientAuth {
             data: JSON.parse(payload),
             headers: JSON.parse(headers),
         });
-        const apiResponse = await apiRequest.json();
+        const apiResponse = await this.tryParseJSON(apiRequest);
         console.log(`Token creation finished: ${apiUri}`);
         expect(apiRequest.status()).toEqual(statusCode);
         return { "apiResponse": apiResponse, "payloadSended": payload }

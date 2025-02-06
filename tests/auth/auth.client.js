@@ -12,7 +12,7 @@ class AuthClient {
         this.basePath = '/api/login/oauth/access_token';
     }
 
-    formatToken(tokenBearer){
+    formatToken(tokenBearer) {
         return `Bearer ${tokenBearer}`;
     }
 
