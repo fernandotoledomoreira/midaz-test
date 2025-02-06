@@ -1,0 +1,19 @@
+
+# Playwright
+node_modules/
+allure-results/
+allure-report/
+playwright-report/
+tests/tdm/
+test-results/
+videos/
+.DS_STORE
+.env
+.env.sdx
+.env.prd
+/.vscode
+/reports/junit/results.xml
+/reports/
+/test-results/*.xml
+/playwright-report/
+/playwright/.cache/
