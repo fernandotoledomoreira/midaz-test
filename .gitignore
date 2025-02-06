@@ -11,6 +11,7 @@ videos/
 .env
 .env.sdx
 .env.prd
+package-lock.json
 /.vscode
 /reports/junit/results.xml
 /reports/
