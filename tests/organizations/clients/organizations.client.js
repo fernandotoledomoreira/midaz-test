@@ -18,6 +18,10 @@ class OrganizationsClient {
         return await new ApiClient(this.request).post(tokenBearer, this.completeUri, payloadPostOrganization, statusCode);
     }
 
+    async createOrganizationsInvalidData(tokenBearer, payload, statusCode) {
+        return await new ApiClient(this.request).post(tokenBearer, this.completeUri, payload, statusCode);
+    }
+
     async listOrganizations(tokenBearer, statusCode = 200) {
         await new ApiClient(this.request).get(tokenBearer, this.completeUri, statusCode);
     }

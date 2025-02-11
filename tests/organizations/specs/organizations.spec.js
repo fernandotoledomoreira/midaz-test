@@ -1,6 +1,8 @@
 const { test, expect } = require('@playwright/test');
 const { OrganizationsClient } = require('../clients/organizations.client');
 const { AuthClient } = require('../../auth/auth.client');
+import invalidPostOrganizations from '../examples/invalidPostOrganizations';
+import Common from '../clients/common';
 
 test.describe('Organizations Feature @allTests', () => {
     let tokenBearer;
@@ -29,4 +31,13 @@ test.describe('Organizations Feature @allTests', () => {
         const params = `/${reqPostOrganization.apiResponse.id}`;
         await new OrganizationsClient(request).deleteOrganizationById(tokenBearer, params, 204);
     });
+
+    for (const testData of invalidPostOrganizations) {
+        test(`POST organization - field ${testData.field} with ${testData.value}`, async ({ request }) => {
+            const payload = require('../payloads/postOrganization').payloadPostOrganization();
+            const updatedPayload = Common.changeFieldsPayload(payload, testData.field, testData.value);
+            await new OrganizationsClient(request).createOrganizationsInvalidData(tokenBearer, updatedPayload, testData.code);
+        });
+    };
+
 });
